@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>English — Обучение</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #4d96ff;
+  --green: #6bcb77;
+  --yellow: #ffd93d;
+  --dark: #1a1a2e;
+  --shadow: 0 8px 32px rgba(77,150,255,0.15);
+  --radius: 24px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(160deg, #c9edff 0%, #e8f7ff 50%, #fef9ec 100%);
+  min-height: 100vh;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+}
+
+/* CLOUDS */
+.clouds { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.cloud { position: absolute; background: #fff; border-radius: 50px; opacity: 0.5; animation: floatCloud linear infinite; }
+.cloud::before,.cloud::after { content:''; position:absolute; background:#fff; border-radius:50%; }
+.cloud:nth-child(1){width:90px;height:28px;top:6%;animation-duration:32s;}
+.cloud:nth-child(1)::before{width:40px;height:40px;top:-20px;left:14px;}
+.cloud:nth-child(1)::after{width:28px;height:28px;top:-12px;left:42px;}
+.cloud:nth-child(2){width:130px;height:38px;top:22%;animation-duration:48s;animation-delay:-14s;}
+.cloud:nth-child(2)::before{width:58px;height:58px;top:-30px;left:18px;}
+.cloud:nth-child(2)::after{width:40px;height:40px;top:-20px;left:64px;}
+.cloud:nth-child(3){width:70px;height:22px;top:40%;animation-duration:36s;animation-delay:-7s;}
+.cloud:nth-child(3)::before{width:30px;height:30px;top:-15px;left:12px;}
+.cloud:nth-child(3)::after{width:22px;height:22px;top:-10px;left:32px;}
+@keyframes floatCloud{from{transform:translateX(-220px)}to{transform:translateX(calc(100vw + 220px))}}
+
+/* SCREENS */
+.screen { display: none; position: relative; z-index: 1; }
+.screen.active { display: block; }
+
+/* ══ HOME ══ */
+.home-header { text-align: center; padding: 32px 20px 16px; }
+.home-header h1 { font-family: 'Fredoka One', cursive; font-size: 2.3rem; color: var(--primary); text-shadow: 0 3px 16px rgba(77,150,255,0.2); }
+.home-header p { color: #6a8caf; font-size: 0.95rem; margin-top: 4px; font-weight: 600; }
+
+.topics { padding: 0 14px; display: flex; flex-direction: column; gap: 12px; }
+.topic-card {
+  background: white; border-radius: var(--radius); padding: 18px 20px;
+  box-shadow: var(--shadow); display: flex; align-items: center; gap: 16px;
+  cursor: pointer; transition: transform 0.15s; border: 3px solid transparent;
+}
+.topic-card:active { transform: scale(0.97); }
+.topic-card .emoji { font-size: 2.4rem; flex-shrink: 0; }
+.topic-card .info { flex: 1; }
+.topic-card .topic-name { font-weight: 900; font-size: 1.05rem; color: var(--dark); }
+.topic-card .topic-meta { font-size: 0.8rem; color: #a0b8d0; font-weight: 700; margin-top: 2px; }
+.topic-card .topic-done { font-size: 0.8rem; color: var(--green); font-weight: 800; margin-top: 3px; }
+
+.all-card { background: linear-gradient(135deg, #667eea, #764ba2); border: none !important; }
+.all-card .topic-name, .all-card .topic-meta { color: white; }
+.all-card .topic-meta { color: rgba(255,255,255,0.8); }
+
+/* ══ LEARN HEADER ══ */
+.learn-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 16px 8px;
+}
+.back-btn {
+  width: 42px; height: 42px; border-radius: 14px; border: none;
+  background: white; box-shadow: var(--shadow); font-size: 1.2rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.learn-title-wrap { flex: 1; }
+.learn-topic-name { font-family: 'Fredoka One', cursive; font-size: 1.25rem; color: var(--primary); }
+.learn-counter { font-size: 0.8rem; color: #a0b8d0; font-weight: 700; }
+
+.prog-wrap { width: min(360px,92vw); background: #d6eaf8; border-radius:20px; height:8px; margin: 6px auto 10px; overflow:hidden; }
+.prog-bar { height:100%; background: linear-gradient(90deg,var(--primary),var(--green)); border-radius:20px; transition:width 0.5s ease; }
+
+/* ══ FLASHCARD ══ */
+.card-scene { width: min(380px, 95vw); margin: 0 auto; perspective: 1000px; }
+
+.flashcard {
+  position: relative;
+  background: white;
+  border-radius: 28px;
+  padding: 30px 24px 24px;
+  box-shadow: 0 16px 56px rgba(77,150,255,0.18);
+  text-align: center;
+  animation: cardIn 0.45s cubic-bezier(.34,1.56,.64,1) both;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+@keyframes cardIn {
+  from { opacity:0; transform: translateY(40px) scale(0.93); }
+  to   { opacity:1; transform: none; }
+}
+
+/* Word number badge */
+.word-num {
+  font-size: 0.8rem; font-weight: 800; color: #a0b8d0;
+  background: #f0f6ff; border-radius: 20px; padding: 4px 14px;
+  align-self: center; margin-bottom: 4px;
+}
+
+/* English word */
+.card-en {
+  font-family: 'Nunito', sans-serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--dark);
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin: 4px 0 2px;
+}
+
+/* Translation */
+.card-ru {
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: var(--primary);
+  margin: 0 0 8px;
+}
+
+/* Divider */
+.card-divider {
+  width: 48px; height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--green));
+  border-radius: 10px;
+  margin: 2px auto 8px;
+}
+
+/* Listen button */
+.listen-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 4px 0 8px; }
+.listen-btn {
+  background: linear-gradient(135deg, #4d96ff, #38b6ff);
+  border: none; border-radius: 50px; color: white;
+  font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 800;
+  padding: 10px 22px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(77,150,255,0.35);
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: transform 0.15s;
+}
+.listen-btn:active { transform: scale(0.95); }
+.listen-btn.playing { background: linear-gradient(135deg, #6bcb77, #38d9a9); }
+.spk { font-size: 1.2rem; }
+.listen-btn.playing .spk { animation: spk 0.5s ease infinite alternate; }
+@keyframes spk { from{transform:scale(1)} to{transform:scale(1.3)} }
+
+/* Step dots */
+.step-dots {
+  display: flex; gap: 8px; justify-content: center; margin: 8px 0 4px;
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #d6eaf8; transition: background 0.3s;
+}
+.dot.active { background: var(--primary); }
+.dot.done   { background: var(--green); }
+
+/* Step panels */
+.step-panel { display: none; width: 100%; }
+.step-panel.active { display: block; animation: fadeUp 0.3s ease both; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* Word + translation panel */
+.word-block { text-align: center; padding: 4px 0 12px; }
+.card-emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; line-height: 1; }
+
+/* Example sentence */
+.example-box {
+  background: #f0f6ff;
+  border-radius: 16px;
+  padding: 18px 18px;
+  width: 100%;
+  text-align: left;
+}
+.example-label {
+  font-size: 0.72rem; font-weight: 900; color: #a0b8d0;
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+}
+.example-en {
+  font-size: 1.05rem; font-weight: 700; color: var(--dark); line-height: 1.5;
+  margin-bottom: 8px;
+}
+.example-en b { color: var(--primary); }
+.example-ru {
+  font-size: 0.92rem; font-weight: 600; color: #6a8caf; line-height: 1.5;
+}
+.listen-again-row { text-align: center; margin-top: 14px; }
+
+/* Navigation buttons */
+.nav-row {
+  display: flex; gap: 10px; width: 100%; margin-top: 16px;
+}
+.nav-btn {
+  flex: 1; padding: 15px; border: none; border-radius: 16px;
+  font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 800;
+  cursor: pointer; transition: transform 0.15s;
+}
+.nav-btn:active { transform: scale(0.97); }
+.nav-btn.prev { background: #f0f6ff; color: var(--primary); }
+.nav-btn.next { background: linear-gradient(135deg, var(--primary), var(--green)); color: white; box-shadow: 0 6px 20px rgba(77,150,255,0.3); }
+
+/* ══ FINISH SCREEN ══ */
+.finish-wrap { z-index:1; position:relative; width:min(380px,95vw); margin:24px auto 0; }
+.finish-card {
+  background: white; border-radius: 28px; padding: 40px 24px 32px;
+  box-shadow: 0 12px 48px rgba(77,150,255,0.18); text-align: center;
+  animation: cardIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.finish-trophy { font-size: 5rem; display: block; margin-bottom: 12px; }
+.finish-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--dark); margin-bottom: 8px; }
+.finish-sub { color: #6a8caf; font-size: 1rem; font-weight: 700; margin-bottom: 28px; }
+.finish-btns { display: flex; flex-direction: column; gap: 10px; }
+.finish-btn {
+  width: 100%; padding: 15px; border: none; border-radius: 16px;
+  font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 800; cursor: pointer;
+  transition: transform 0.15s;
+}
+.finish-btn:active { transform: scale(0.97); }
+.finish-btn.primary { background: linear-gradient(135deg, var(--primary), var(--green)); color: white; box-shadow: 0 6px 20px rgba(77,150,255,0.3); }
+.finish-btn.secondary { background: #f0f6ff; color: var(--primary); }
+
+/* Stars burst */
+.stars-burst { position:fixed; inset:0; pointer-events:none; z-index:200; }
+.sp { position:absolute; font-size:1.8rem; animation:burst 1s ease forwards; opacity:0; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+@keyframes burst {
+  0%{opacity:1;transform:translate(0,0) scale(1) rotate(0deg)}
+  100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0.2) rotate(var(--rot))}
+}
+</style>
+</head>
+<body>
+
+<div class="clouds"><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div></div>
+<div class="stars-burst" id="stars-burst"></div>
+
+<!-- ══ HOME ══ -->
+<div class="screen active" id="screen-home">
+  <div class="home-header">
+    <h1>📖 Учим слова</h1>
+    <p>Выбери тему для изучения</p>
+  </div>
+  <div class="topics" id="topics-list"></div>
+</div>
+
+<!-- ══ LEARN ══ -->
+<div class="screen" id="screen-learn">
+  <div class="learn-header">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="learn-title-wrap">
+      <div class="learn-topic-name" id="learn-topic-name"></div>
+      <div class="learn-counter" id="learn-counter">Слово 1 из 10</div>
+    </div>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-bar" id="learn-prog" style="width:0%"></div></div>
+
+  <div class="card-scene">
+    <div class="flashcard" id="flashcard">
+      <div class="word-num" id="word-num">1 / 10</div>
+
+      <!-- Step dots -->
+      <div class="step-dots">
+        <div class="dot active" id="dot-1"></div>
+        <div class="dot" id="dot-2"></div>
+      </div>
+
+      <!-- Step 1: Word + translation + listen -->
+      <div class="step-panel active" id="step-1">
+        <div class="word-block">
+          <span class="card-emoji" id="card-emoji">👩</span>
+          <div class="card-en" id="card-en">mother</div>
+          <div class="card-divider"></div>
+          <div class="card-ru" id="card-ru">мама</div>
+        </div>
+        <div class="listen-row">
+          <button class="listen-btn" id="listen-btn" onclick="speakWord()">
+            <span class="spk" id="spk-icon">🔊</span>
+            <span id="listen-label">Нажми и послушай</span>
+          </button>
+        </div>
+        <div class="listen-hint" id="listen-hint" style="text-align:center;font-size:0.8rem;color:#a0b8d0;font-weight:700;margin-top:8px;animation:blink 1.4s ease infinite;">👆 Послушай слово перед тем как идти дальше</div>
+      </div>
+
+      <!-- Step 2: Example sentence -->
+      <div class="step-panel" id="step-2">
+        <div class="example-box">
+          <div class="example-label">📝 Пример предложения</div>
+          <div class="example-en" id="example-en">My <b>mother</b> is very kind.</div>
+          <div class="example-ru" id="example-ru">Моя мама очень добрая.</div>
+        </div>
+        <div class="listen-again-row">
+          <button class="listen-btn" id="listen-btn-2" onclick="speakWord()">
+            <span class="spk">🔊</span>
+            <span>Послушать слово снова</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row" style="width:min(380px,95vw);margin:14px auto 0;padding:0 0;">
+    <button class="nav-btn prev" id="prev-btn" onclick="prevStep()">← Назад</button>
+    <button class="nav-btn next" id="next-btn" onclick="nextStep()" disabled style="opacity:0.4;">Далее →</button>
+  </div>
+</div>
+
+<!-- ══ FINISH ══ -->
+<div class="screen" id="screen-finish">
+  <div class="finish-wrap">
+    <div class="finish-card">
+      <span class="finish-trophy">🎓</span>
+      <div class="finish-title" id="finish-title">Тема изучена!</div>
+      <div class="finish-sub" id="finish-sub">Ты прошла все слова по теме</div>
+      <div class="finish-btns">
+        <button class="finish-btn primary" onclick="repeatTopic()">🔄 Повторить тему</button>
+        <button class="finish-btn secondary" onclick="goHome()">← К темам</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  WORDS DATA
+// ══════════════════════════════════════════
+const TOPICS = [
+  {
+    id: 'family', name: 'Семья и дом', emoji: '🏠',
+    words: [
+      {en:'mother', ru:'мама / мать', ex_en:'My <b>mother</b> cooks dinner every day.', ex_ru:'Моя мама готовит ужин каждый день.'},
+      {en:'father', ru:'папа / отец', ex_en:'My <b>father</b> goes to work by car.', ex_ru:'Мой папа едет на работу на машине.'},
+      {en:'sister', ru:'сестра', ex_en:'My <b>sister</b> likes to sing.', ex_ru:'Моя сестра любит петь.'},
+      {en:'brother', ru:'брат', ex_en:'My <b>brother</b> plays football.', ex_ru:'Мой брат играет в футбол.'},
+      {en:'grandmother', ru:'бабушка', ex_en:'My <b>grandmother</b> makes delicious cakes.', ex_ru:'Моя бабушка печёт вкусные пироги.'},
+      {en:'grandfather', ru:'дедушка / дед', ex_en:'My <b>grandfather</b> reads the newspaper.', ex_ru:'Мой дедушка читает газету.'},
+      {en:'family', ru:'семья', ex_en:'My <b>family</b> is big and friendly.', ex_ru:'Моя семья большая и дружная.'},
+      {en:'son', ru:'сын', ex_en:'He is the <b>son</b> of a doctor.', ex_ru:'Он сын врача.'},
+      {en:'daughter', ru:'дочь / дочка', ex_en:'She is their only <b>daughter</b>.', ex_ru:'Она их единственная дочь.'},
+      {en:'aunt', ru:'тётя', ex_en:'My <b>aunt</b> lives in Moscow.', ex_ru:'Моя тётя живёт в Москве.'},
+      {en:'uncle', ru:'дядя', ex_en:'My <b>uncle</b> has a big dog.', ex_ru:'У моего дяди большая собака.'},
+      {en:'baby', ru:'малыш / ребёнок', ex_en:'The <b>baby</b> is sleeping now.', ex_ru:'Малыш сейчас спит.'},
+      {en:'house', ru:'дом', ex_en:'We live in a big <b>house</b>.', ex_ru:'Мы живём в большом доме.'},
+      {en:'flat', ru:'квартира', ex_en:'Our <b>flat</b> is on the third floor.', ex_ru:'Наша квартира на третьем этаже.'},
+      {en:'room', ru:'комната', ex_en:'My <b>room</b> is small but cosy.', ex_ru:'Моя комната маленькая, но уютная.'},
+      {en:'kitchen', ru:'кухня', ex_en:'We eat breakfast in the <b>kitchen</b>.', ex_ru:'Мы завтракаем на кухне.'},
+      {en:'bedroom', ru:'спальня', ex_en:'There is a big bed in the <b>bedroom</b>.', ex_ru:'В спальне стоит большая кровать.'},
+      {en:'bathroom', ru:'ванная', ex_en:'I wash my hands in the <b>bathroom</b>.', ex_ru:'Я мою руки в ванной.'},
+      {en:'garden', ru:'сад / огород', ex_en:'We grow tomatoes in our <b>garden</b>.', ex_ru:'Мы выращиваем помидоры в огороде.'},
+      {en:'table', ru:'стол', ex_en:'The book is on the <b>table</b>.', ex_ru:'Книга на столе.'},
+      {en:'chair', ru:'стул', ex_en:'Please sit on the <b>chair</b>.', ex_ru:'Пожалуйста, сядь на стул.'},
+      {en:'bed', ru:'кровать', ex_en:'I go to <b>bed</b> at nine o\'clock.', ex_ru:'Я ложусь спать в девять часов.'},
+      {en:'sofa', ru:'диван', ex_en:'The cat is sleeping on the <b>sofa</b>.', ex_ru:'Кошка спит на диване.'},
+      {en:'door', ru:'дверь', ex_en:'Please close the <b>door</b>.', ex_ru:'Пожалуйста, закрой дверь.'},
+      {en:'window', ru:'окно', ex_en:'Open the <b>window</b>, it\'s hot.', ex_ru:'Открой окно, жарко.'},
+      {en:'floor', ru:'пол', ex_en:'The toy fell on the <b>floor</b>.', ex_ru:'Игрушка упала на пол.'},
+      {en:'wall', ru:'стена', ex_en:'There is a picture on the <b>wall</b>.', ex_ru:'На стене висит картина.'},
+      {en:'lamp', ru:'лампа', ex_en:'Turn on the <b>lamp</b>, please.', ex_ru:'Включи лампу, пожалуйста.'},
+      {en:'cupboard', ru:'шкаф', ex_en:'My clothes are in the <b>cupboard</b>.', ex_ru:'Моя одежда в шкафу.'},
+      {en:'fridge', ru:'холодильник', ex_en:'The milk is in the <b>fridge</b>.', ex_ru:'Молоко в холодильнике.'},
+    ]
+  },
+  {
+    id: 'school', name: 'Школа', emoji: '🏫',
+    words: [
+      {en:'school', ru:'школа', ex_en:'I go to <b>school</b> every day.', ex_ru:'Я хожу в школу каждый день.'},
+      {en:'teacher', ru:'учитель', ex_en:'Our <b>teacher</b> is very kind.', ex_ru:'Наш учитель очень добрый.'},
+      {en:'pupil', ru:'ученик', ex_en:'Every <b>pupil</b> has a bag.', ex_ru:'У каждого ученика есть сумка.'},
+      {en:'lesson', ru:'урок', ex_en:'The <b>lesson</b> starts at eight.', ex_ru:'Урок начинается в восемь.'},
+      {en:'pencil', ru:'карандаш', ex_en:'I draw with a <b>pencil</b>.', ex_ru:'Я рисую карандашом.'},
+      {en:'pen', ru:'ручка', ex_en:'Write with a <b>pen</b>, not a pencil.', ex_ru:'Пиши ручкой, а не карандашом.'},
+      {en:'book', ru:'книга', ex_en:'This <b>book</b> is very interesting.', ex_ru:'Эта книга очень интересная.'},
+      {en:'bag', ru:'сумка / портфель', ex_en:'My <b>bag</b> is heavy today.', ex_ru:'Мой портфель сегодня тяжёлый.'},
+      {en:'ruler', ru:'линейка', ex_en:'Use a <b>ruler</b> to draw a straight line.', ex_ru:'Используй линейку, чтобы нарисовать прямую линию.'},
+      {en:'desk', ru:'парта', ex_en:'Put your book on the <b>desk</b>.', ex_ru:'Положи книгу на парту.'},
+      {en:'board', ru:'доска', ex_en:'The teacher writes on the <b>board</b>.', ex_ru:'Учитель пишет на доске.'},
+      {en:'class', ru:'класс', ex_en:'There are twenty pupils in our <b>class</b>.', ex_ru:'В нашем классе двадцать учеников.'},
+      {en:'homework', ru:'домашнее задание', ex_en:'I do my <b>homework</b> after school.', ex_ru:'Я делаю домашнее задание после школы.'},
+      {en:'notebook', ru:'тетрадь', ex_en:'Write the answer in your <b>notebook</b>.', ex_ru:'Запиши ответ в тетрадь.'},
+      {en:'eraser', ru:'ластик', ex_en:'Can I borrow your <b>eraser</b>?', ex_ru:'Можно взять твой ластик?'},
+      {en:'answer', ru:'ответ', ex_en:'What is your <b>answer</b>?', ex_ru:'Какой твой ответ?'},
+      {en:'question', ru:'вопрос', ex_en:'Ask a <b>question</b> if you don\'t understand.', ex_ru:'Задай вопрос, если не понимаешь.'},
+      {en:'test', ru:'тест / контрольная', ex_en:'We have a <b>test</b> tomorrow.', ex_ru:'Завтра у нас контрольная.'},
+      {en:'grade', ru:'оценка', ex_en:'I got a good <b>grade</b> in English.', ex_ru:'Я получила хорошую оценку по английскому.'},
+      {en:'break', ru:'перемена', ex_en:'We play outside during the <b>break</b>.', ex_ru:'Мы играем на улице во время перемены.'},
+      {en:'library', ru:'библиотека', ex_en:'I borrow books from the <b>library</b>.', ex_ru:'Я беру книги в библиотеке.'},
+      {en:'sport', ru:'спорт', ex_en:'I love <b>sport</b> lessons.', ex_ru:'Я люблю уроки физкультуры.'},
+      {en:'music', ru:'музыка', ex_en:'We sing songs in <b>music</b> class.', ex_ru:'Мы поём песни на уроке музыки.'},
+    ]
+  },
+  {
+    id: 'animals', name: 'Животные', emoji: '🐾',
+    words: [
+      {en:'cat', ru:'кот / кошка', ex_en:'My <b>cat</b> sleeps all day.', ex_ru:'Мой кот спит весь день.'},
+      {en:'dog', ru:'собака / пёс', ex_en:'The <b>dog</b> runs fast.', ex_ru:'Собака бегает быстро.'},
+      {en:'bird', ru:'птица', ex_en:'A <b>bird</b> is singing in the tree.', ex_ru:'Птица поёт на дереве.'},
+      {en:'fish', ru:'рыба', ex_en:'I have a red <b>fish</b> at home.', ex_ru:'У меня дома есть красная рыбка.'},
+      {en:'rabbit', ru:'кролик', ex_en:'The <b>rabbit</b> eats carrots.', ex_ru:'Кролик ест морковку.'},
+      {en:'horse', ru:'лошадь', ex_en:'A <b>horse</b> can run very fast.', ex_ru:'Лошадь умеет очень быстро бегать.'},
+      {en:'elephant', ru:'слон', ex_en:'An <b>elephant</b> has a long nose.', ex_ru:'У слона длинный нос.'},
+      {en:'bear', ru:'медведь', ex_en:'The <b>bear</b> lives in the forest.', ex_ru:'Медведь живёт в лесу.'},
+      {en:'lion', ru:'лев', ex_en:'The <b>lion</b> is the king of animals.', ex_ru:'Лев — король зверей.'},
+      {en:'tiger', ru:'тигр', ex_en:'A <b>tiger</b> has orange stripes.', ex_ru:'У тигра оранжевые полоски.'},
+      {en:'monkey', ru:'обезьяна', ex_en:'A <b>monkey</b> can climb trees.', ex_ru:'Обезьяна умеет лазить по деревьям.'},
+      {en:'cow', ru:'корова', ex_en:'A <b>cow</b> gives us milk.', ex_ru:'Корова даёт нам молоко.'},
+      {en:'pig', ru:'свинья', ex_en:'The <b>pig</b> is pink and fat.', ex_ru:'Свинья розовая и толстая.'},
+      {en:'fox', ru:'лиса', ex_en:'The <b>fox</b> is clever and red.', ex_ru:'Лиса хитрая и рыжая.'},
+      {en:'wolf', ru:'волк', ex_en:'The <b>wolf</b> howls at night.', ex_ru:'Волк воет ночью.'},
+      {en:'duck', ru:'утка', ex_en:'The <b>duck</b> swims in the pond.', ex_ru:'Утка плавает в пруду.'},
+      {en:'frog', ru:'лягушка', ex_en:'A <b>frog</b> jumps very high.', ex_ru:'Лягушка прыгает очень высоко.'},
+      {en:'snake', ru:'змея', ex_en:'The <b>snake</b> moves without legs.', ex_ru:'Змея двигается без ног.'},
+      {en:'mouse', ru:'мышь', ex_en:'The <b>mouse</b> is small and grey.', ex_ru:'Мышь маленькая и серая.'},
+      {en:'chicken', ru:'курица', ex_en:'The <b>chicken</b> lays eggs.', ex_ru:'Курица несёт яйца.'},
+      {en:'parrot', ru:'попугай', ex_en:'My <b>parrot</b> can say hello.', ex_ru:'Мой попугай умеет говорить «привет».'},
+      {en:'giraffe', ru:'жираф', ex_en:'A <b>giraffe</b> has a very long neck.', ex_ru:'У жирафа очень длинная шея.'},
+      {en:'crocodile', ru:'крокодил', ex_en:'A <b>crocodile</b> lives near rivers.', ex_ru:'Крокодил живёт около рек.'},
+      {en:'penguin', ru:'пингвин', ex_en:'A <b>penguin</b> cannot fly.', ex_ru:'Пингвин не умеет летать.'},
+      {en:'sheep', ru:'овца', ex_en:'The <b>sheep</b> has white wool.', ex_ru:'У овцы белая шерсть.'},
+      {en:'goat', ru:'коза', ex_en:'The <b>goat</b> eats grass.', ex_ru:'Коза ест траву.'},
+      {en:'bee', ru:'пчела', ex_en:'A <b>bee</b> makes honey.', ex_ru:'Пчела делает мёд.'},
+      {en:'butterfly', ru:'бабочка', ex_en:'The <b>butterfly</b> is very colourful.', ex_ru:'Бабочка очень разноцветная.'},
+    ]
+  },
+  {
+    id: 'food', name: 'Еда и напитки', emoji: '🍎',
+    words: [
+      {en:'apple', ru:'яблоко', ex_en:'I eat an <b>apple</b> every morning.', ex_ru:'Я ем яблоко каждое утро.'},
+      {en:'banana', ru:'банан', ex_en:'A <b>banana</b> is yellow and sweet.', ex_ru:'Банан жёлтый и сладкий.'},
+      {en:'orange', ru:'апельсин', ex_en:'I drink <b>orange</b> juice for breakfast.', ex_ru:'Я пью апельсиновый сок на завтрак.'},
+      {en:'lemon', ru:'лимон', ex_en:'A <b>lemon</b> is sour.', ex_ru:'Лимон кислый.'},
+      {en:'strawberry', ru:'клубника', ex_en:'I love <b>strawberry</b> jam.', ex_ru:'Я люблю клубничное варенье.'},
+      {en:'bread', ru:'хлеб', ex_en:'I eat <b>bread</b> with butter.', ex_ru:'Я ем хлеб с маслом.'},
+      {en:'milk', ru:'молоко', ex_en:'I drink a glass of <b>milk</b> every day.', ex_ru:'Я пью стакан молока каждый день.'},
+      {en:'water', ru:'вода', ex_en:'Drink more <b>water</b> every day.', ex_ru:'Пей больше воды каждый день.'},
+      {en:'juice', ru:'сок', ex_en:'Apple <b>juice</b> is my favourite drink.', ex_ru:'Яблочный сок — мой любимый напиток.'},
+      {en:'tea', ru:'чай', ex_en:'My mum drinks <b>tea</b> in the morning.', ex_ru:'Моя мама пьёт чай по утрам.'},
+      {en:'soup', ru:'суп', ex_en:'We eat <b>soup</b> for lunch.', ex_ru:'Мы едим суп на обед.'},
+      {en:'meat', ru:'мясо', ex_en:'We cook <b>meat</b> for dinner.', ex_ru:'Мы готовим мясо на ужин.'},
+      {en:'fish', ru:'рыба', ex_en:'We eat <b>fish</b> on Fridays.', ex_ru:'По пятницам мы едим рыбу.'},
+      {en:'cheese', ru:'сыр', ex_en:'I put <b>cheese</b> on my sandwich.', ex_ru:'Я кладу сыр на бутерброд.'},
+      {en:'egg', ru:'яйцо', ex_en:'I eat a boiled <b>egg</b> for breakfast.', ex_ru:'Я ем варёное яйцо на завтрак.'},
+      {en:'cake', ru:'торт / пирог', ex_en:'We eat <b>cake</b> on birthdays.', ex_ru:'Мы едим торт на дни рождения.'},
+      {en:'salad', ru:'салат', ex_en:'I make a vegetable <b>salad</b>.', ex_ru:'Я делаю овощной салат.'},
+      {en:'rice', ru:'рис', ex_en:'We have <b>rice</b> with chicken for lunch.', ex_ru:'На обед у нас рис с курицей.'},
+      {en:'butter', ru:'масло', ex_en:'I put <b>butter</b> on the bread.', ex_ru:'Я намазываю масло на хлеб.'},
+      {en:'sugar', ru:'сахар', ex_en:'I don\'t put <b>sugar</b> in my tea.', ex_ru:'Я не кладу сахар в чай.'},
+      {en:'potato', ru:'картошка', ex_en:'I love fried <b>potato</b>.', ex_ru:'Я люблю жареную картошку.'},
+      {en:'tomato', ru:'помидор', ex_en:'A <b>tomato</b> is red and juicy.', ex_ru:'Помидор красный и сочный.'},
+      {en:'carrot', ru:'морковь', ex_en:'A rabbit eats a <b>carrot</b>.', ex_ru:'Кролик ест морковку.'},
+      {en:'onion', ru:'лук', ex_en:'My mum adds <b>onion</b> to the soup.', ex_ru:'Мама добавляет лук в суп.'},
+      {en:'cucumber', ru:'огурец', ex_en:'A <b>cucumber</b> is green and fresh.', ex_ru:'Огурец зелёный и свежий.'},
+      {en:'chocolate', ru:'шоколад', ex_en:'I love <b>chocolate</b> ice cream.', ex_ru:'Я люблю шоколадное мороженое.'},
+      {en:'ice cream', ru:'мороженое', ex_en:'In summer I eat <b>ice cream</b> every day.', ex_ru:'Летом я ем мороженое каждый день.'},
+      {en:'pizza', ru:'пицца', ex_en:'We order <b>pizza</b> on Saturdays.', ex_ru:'По субботам мы заказываем пиццу.'},
+    ]
+  },
+  {
+    id: 'clothes', name: 'Одежда', emoji: '👕',
+    words: [
+      {en:'shirt', ru:'рубашка', ex_en:'He wears a white <b>shirt</b> to school.', ex_ru:'Он носит белую рубашку в школу.'},
+      {en:'dress', ru:'платье', ex_en:'She has a beautiful red <b>dress</b>.', ex_ru:'У неё красивое красное платье.'},
+      {en:'skirt', ru:'юбка', ex_en:'She wears a blue <b>skirt</b>.', ex_ru:'Она носит синюю юбку.'},
+      {en:'trousers', ru:'брюки / штаны', ex_en:'He wears black <b>trousers</b>.', ex_ru:'Он носит чёрные брюки.'},
+      {en:'jeans', ru:'джинсы', ex_en:'I like wearing <b>jeans</b>.', ex_ru:'Я люблю носить джинсы.'},
+      {en:'shoes', ru:'туфли / ботинки', ex_en:'These <b>shoes</b> are very comfortable.', ex_ru:'Эти туфли очень удобные.'},
+      {en:'boots', ru:'сапоги', ex_en:'I wear <b>boots</b> in winter.', ex_ru:'Зимой я ношу сапоги.'},
+      {en:'hat', ru:'шляпа / шапка', ex_en:'Put on your <b>hat</b>, it\'s cold outside.', ex_ru:'Надень шапку, на улице холодно.'},
+      {en:'coat', ru:'пальто', ex_en:'I wear my <b>coat</b> in autumn.', ex_ru:'Осенью я ношу пальто.'},
+      {en:'jacket', ru:'куртка', ex_en:'He puts on his <b>jacket</b> and goes out.', ex_ru:'Он надевает куртку и выходит.'},
+      {en:'socks', ru:'носки', ex_en:'My <b>socks</b> are warm and soft.', ex_ru:'Мои носки тёплые и мягкие.'},
+      {en:'gloves', ru:'перчатки', ex_en:'She wears <b>gloves</b> in winter.', ex_ru:'Зимой она носит перчатки.'},
+      {en:'scarf', ru:'шарф', ex_en:'This <b>scarf</b> is warm and cosy.', ex_ru:'Этот шарф тёплый и уютный.'},
+      {en:'sweater', ru:'свитер', ex_en:'I put on a <b>sweater</b> because it\'s cold.', ex_ru:'Я надела свитер, потому что холодно.'},
+      {en:'pyjamas', ru:'пижама', ex_en:'I wear my <b>pyjamas</b> at night.', ex_ru:'Ночью я ношу пижаму.'},
+      {en:'uniform', ru:'форма', ex_en:'We wear a <b>uniform</b> at school.', ex_ru:'В школе мы носим форму.'},
+      {en:'belt', ru:'ремень / пояс', ex_en:'He wears a brown <b>belt</b>.', ex_ru:'Он носит коричневый ремень.'},
+      {en:'pocket', ru:'карман', ex_en:'I put my phone in my <b>pocket</b>.', ex_ru:'Я кладу телефон в карман.'},
+    ]
+  },
+  {
+    id: 'nature', name: 'Природа и погода', emoji: '🌍',
+    words: [
+      {en:'sun', ru:'солнце', ex_en:'The <b>sun</b> is shining today.', ex_ru:'Сегодня светит солнце.'},
+      {en:'moon', ru:'луна', ex_en:'The <b>moon</b> is bright tonight.', ex_ru:'Сегодня ночью луна яркая.'},
+      {en:'star', ru:'звезда', ex_en:'I can see many <b>stars</b> in the sky.', ex_ru:'Я вижу много звёзд на небе.'},
+      {en:'sky', ru:'небо', ex_en:'The <b>sky</b> is blue and clear.', ex_ru:'Небо голубое и ясное.'},
+      {en:'cloud', ru:'облако', ex_en:'There are white <b>clouds</b> in the sky.', ex_ru:'На небе белые облака.'},
+      {en:'tree', ru:'дерево', ex_en:'There is a big <b>tree</b> near our house.', ex_ru:'Рядом с нашим домом стоит большое дерево.'},
+      {en:'flower', ru:'цветок', ex_en:'She gives me a beautiful <b>flower</b>.', ex_ru:'Она дарит мне красивый цветок.'},
+      {en:'grass', ru:'трава', ex_en:'The <b>grass</b> is green in spring.', ex_ru:'Весной трава зелёная.'},
+      {en:'leaf', ru:'лист', ex_en:'The <b>leaves</b> fall in autumn.', ex_ru:'Листья падают осенью.'},
+      {en:'river', ru:'река', ex_en:'We swim in the <b>river</b> in summer.', ex_ru:'Летом мы плаваем в реке.'},
+      {en:'lake', ru:'озеро', ex_en:'There are fish in the <b>lake</b>.', ex_ru:'В озере есть рыба.'},
+      {en:'sea', ru:'море', ex_en:'We go to the <b>sea</b> every summer.', ex_ru:'Каждое лето мы ездим на море.'},
+      {en:'ocean', ru:'океан', ex_en:'The <b>ocean</b> is very deep.', ex_ru:'Океан очень глубокий.'},
+      {en:'mountain', ru:'гора', ex_en:'We climbed a high <b>mountain</b>.', ex_ru:'Мы поднялись на высокую гору.'},
+      {en:'forest', ru:'лес', ex_en:'There are many animals in the <b>forest</b>.', ex_ru:'В лесу живёт много животных.'},
+      {en:'rain', ru:'дождь', ex_en:'I take an umbrella when it <b>rains</b>.', ex_ru:'Я беру зонт, когда идёт дождь.'},
+      {en:'snow', ru:'снег', ex_en:'Children play in the <b>snow</b>.', ex_ru:'Дети играют в снегу.'},
+      {en:'wind', ru:'ветер', ex_en:'The <b>wind</b> is very strong today.', ex_ru:'Сегодня очень сильный ветер.'},
+      {en:'ice', ru:'лёд', ex_en:'The lake is covered with <b>ice</b>.', ex_ru:'Озеро покрыто льдом.'},
+      {en:'summer', ru:'лето', ex_en:'I love <b>summer</b> because it\'s warm.', ex_ru:'Я люблю лето, потому что тепло.'},
+      {en:'winter', ru:'зима', ex_en:'In <b>winter</b> we skate on ice.', ex_ru:'Зимой мы катаемся на коньках.'},
+      {en:'spring', ru:'весна', ex_en:'Flowers bloom in <b>spring</b>.', ex_ru:'Весной цветут цветы.'},
+      {en:'autumn', ru:'осень', ex_en:'Leaves fall from trees in <b>autumn</b>.', ex_ru:'Осенью листья опадают с деревьев.'},
+      {en:'weather', ru:'погода', ex_en:'What\'s the <b>weather</b> like today?', ex_ru:'Какая сегодня погода?'},
+      {en:'temperature', ru:'температура', ex_en:'The <b>temperature</b> is 20 degrees today.', ex_ru:'Сегодня температура 20 градусов.'},
+    ]
+  },
+  {
+    id: 'transport', name: 'Транспорт и город', emoji: '🚗',
+    words: [
+      {en:'car', ru:'машина / автомобиль', ex_en:'My dad drives a red <b>car</b>.', ex_ru:'Мой папа ездит на красной машине.'},
+      {en:'bus', ru:'автобус', ex_en:'I go to school by <b>bus</b>.', ex_ru:'Я езжу в школу на автобусе.'},
+      {en:'train', ru:'поезд', ex_en:'We went to the city by <b>train</b>.', ex_ru:'Мы поехали в город на поезде.'},
+      {en:'plane', ru:'самолёт', ex_en:'The <b>plane</b> flies very high.', ex_ru:'Самолёт летит очень высоко.'},
+      {en:'bike', ru:'велосипед', ex_en:'I ride my <b>bike</b> in the park.', ex_ru:'Я катаюсь на велосипеде в парке.'},
+      {en:'taxi', ru:'такси', ex_en:'We called a <b>taxi</b> to the airport.', ex_ru:'Мы вызвали такси в аэропорт.'},
+      {en:'ship', ru:'корабль', ex_en:'The <b>ship</b> sails on the sea.', ex_ru:'Корабль плывёт по морю.'},
+      {en:'tram', ru:'трамвай', ex_en:'The <b>tram</b> goes through the city.', ex_ru:'Трамвай едет через город.'},
+      {en:'metro', ru:'метро', ex_en:'We went by <b>metro</b> to the museum.', ex_ru:'Мы поехали в музей на метро.'},
+      {en:'shop', ru:'магазин', ex_en:'We buy food at the <b>shop</b>.', ex_ru:'Мы покупаем еду в магазине.'},
+      {en:'park', ru:'парк', ex_en:'We walk in the <b>park</b> on Sundays.', ex_ru:'По воскресеньям мы гуляем в парке.'},
+      {en:'street', ru:'улица', ex_en:'Our <b>street</b> is long and beautiful.', ex_ru:'Наша улица длинная и красивая.'},
+      {en:'road', ru:'дорога', ex_en:'The <b>road</b> goes through the forest.', ex_ru:'Дорога идёт через лес.'},
+      {en:'bridge', ru:'мост', ex_en:'We cross the river on the <b>bridge</b>.', ex_ru:'Мы переходим реку по мосту.'},
+      {en:'hospital', ru:'больница', ex_en:'The doctor works at the <b>hospital</b>.', ex_ru:'Доктор работает в больнице.'},
+      {en:'cinema', ru:'кинотеатр', ex_en:'We go to the <b>cinema</b> on Fridays.', ex_ru:'По пятницам мы ходим в кино.'},
+      {en:'museum', ru:'музей', ex_en:'We saw paintings at the <b>museum</b>.', ex_ru:'Мы смотрели картины в музее.'},
+      {en:'airport', ru:'аэропорт', ex_en:'We go to the <b>airport</b> by taxi.', ex_ru:'В аэропорт мы едем на такси.'},
+      {en:'station', ru:'вокзал / станция', ex_en:'The train leaves from the <b>station</b>.', ex_ru:'Поезд отправляется с вокзала.'},
+      {en:'hotel', ru:'гостиница / отель', ex_en:'We stayed in a nice <b>hotel</b>.', ex_ru:'Мы остановились в хорошем отеле.'},
+      {en:'city', ru:'город', ex_en:'Moscow is a big <b>city</b>.', ex_ru:'Москва — большой город.'},
+      {en:'village', ru:'деревня', ex_en:'My grandmother lives in a <b>village</b>.', ex_ru:'Моя бабушка живёт в деревне.'},
+      {en:'map', ru:'карта', ex_en:'We use a <b>map</b> to find the way.', ex_ru:'Мы используем карту, чтобы найти дорогу.'},
+    ]
+  },
+  {
+    id: 'body', name: 'Тело человека', emoji: '👤',
+    words: [
+      {en:'head', ru:'голова', ex_en:'I have a headache in my <b>head</b>.', ex_ru:'У меня болит голова.'},
+      {en:'face', ru:'лицо', ex_en:'She has a kind <b>face</b>.', ex_ru:'У неё доброе лицо.'},
+      {en:'eye', ru:'глаз', ex_en:'She has blue <b>eyes</b>.', ex_ru:'У неё голубые глаза.'},
+      {en:'ear', ru:'ухо', ex_en:'I listen with my <b>ears</b>.', ex_ru:'Я слушаю ушами.'},
+      {en:'nose', ru:'нос', ex_en:'I smell flowers with my <b>nose</b>.', ex_ru:'Я чувствую запах цветов носом.'},
+      {en:'mouth', ru:'рот', ex_en:'I eat with my <b>mouth</b>.', ex_ru:'Я ем ртом.'},
+      {en:'tooth', ru:'зуб', ex_en:'I brush my <b>teeth</b> twice a day.', ex_ru:'Я чищу зубы два раза в день.'},
+      {en:'tongue', ru:'язык', ex_en:'I taste food with my <b>tongue</b>.', ex_ru:'Я пробую еду языком.'},
+      {en:'neck', ru:'шея', ex_en:'The giraffe has a long <b>neck</b>.', ex_ru:'У жирафа длинная шея.'},
+      {en:'hand', ru:'рука', ex_en:'I write with my right <b>hand</b>.', ex_ru:'Я пишу правой рукой.'},
+      {en:'arm', ru:'рука', ex_en:'She broke her <b>arm</b>.', ex_ru:'Она сломала руку.'},
+      {en:'leg', ru:'нога', ex_en:'I kicked the ball with my <b>leg</b>.', ex_ru:'Я ударил мяч ногой.'},
+      {en:'foot', ru:'стопа / ступня', ex_en:'My <b>foot</b> hurts after walking.', ex_ru:'У меня болит стопа после ходьбы.'},
+      {en:'knee', ru:'колено', ex_en:'I fell and hurt my <b>knee</b>.', ex_ru:'Я упала и ударила колено.'},
+      {en:'back', ru:'спина', ex_en:'My <b>back</b> hurts after sport.', ex_ru:'У меня болит спина после спорта.'},
+      {en:'hair', ru:'волосы', ex_en:'She has long brown <b>hair</b>.', ex_ru:'У неё длинные каштановые волосы.'},
+      {en:'finger', ru:'палец', ex_en:'I count on my <b>fingers</b>.', ex_ru:'Я считаю на пальцах.'},
+      {en:'shoulder', ru:'плечо', ex_en:'She carried a bag on her <b>shoulder</b>.', ex_ru:'Она несла сумку на плече.'},
+      {en:'stomach', ru:'живот', ex_en:'My <b>stomach</b> hurts, I ate too much.', ex_ru:'У меня болит живот, я съела слишком много.'},
+      {en:'heart', ru:'сердце', ex_en:'The <b>heart</b> pumps blood.', ex_ru:'Сердце качает кровь.'},
+      {en:'skin', ru:'кожа', ex_en:'The <b>skin</b> protects our body.', ex_ru:'Кожа защищает наше тело.'},
+    ]
+  },
+  {
+    id: 'colors', name: 'Цвета', emoji: '🌈',
+    words: [
+      {en:'red', ru:'красный', ex_en:'She has a <b>red</b> bag.', ex_ru:'У неё красная сумка.'},
+      {en:'blue', ru:'синий / голубой', ex_en:'The sky is <b>blue</b>.', ex_ru:'Небо синее.'},
+      {en:'green', ru:'зелёный', ex_en:'Grass is <b>green</b>.', ex_ru:'Трава зелёная.'},
+      {en:'yellow', ru:'жёлтый', ex_en:'The sun is <b>yellow</b>.', ex_ru:'Солнце жёлтое.'},
+      {en:'orange', ru:'оранжевый', ex_en:'An orange is <b>orange</b>.', ex_ru:'Апельсин оранжевый.'},
+      {en:'purple', ru:'фиолетовый', ex_en:'She likes <b>purple</b> flowers.', ex_ru:'Она любит фиолетовые цветы.'},
+      {en:'pink', ru:'розовый', ex_en:'The little girl has a <b>pink</b> dress.', ex_ru:'У маленькой девочки розовое платье.'},
+      {en:'white', ru:'белый', ex_en:'Snow is <b>white</b>.', ex_ru:'Снег белый.'},
+      {en:'black', ru:'чёрный', ex_en:'The cat is <b>black</b>.', ex_ru:'Кошка чёрная.'},
+      {en:'brown', ru:'коричневый', ex_en:'The bear is <b>brown</b>.', ex_ru:'Медведь коричневый.'},
+      {en:'grey', ru:'серый', ex_en:'The sky is <b>grey</b> today.', ex_ru:'Сегодня небо серое.'},
+      {en:'light', ru:'светлый', ex_en:'She wears a <b>light</b> blue dress.', ex_ru:'Она носит светло-голубое платье.'},
+      {en:'dark', ru:'тёмный', ex_en:'He has <b>dark</b> brown hair.', ex_ru:'У него тёмно-каштановые волосы.'},
+    ]
+  },
+  {
+    id: 'verbs', name: 'Глаголы', emoji: '🎮',
+    words: [
+      {en:'eat', ru:'есть / кушать', ex_en:'I <b>eat</b> breakfast at seven o\'clock.', ex_ru:'Я завтракаю в семь часов.'},
+      {en:'drink', ru:'пить', ex_en:'I <b>drink</b> milk every morning.', ex_ru:'Каждое утро я пью молоко.'},
+      {en:'run', ru:'бегать / бежать', ex_en:'I <b>run</b> in the park every morning.', ex_ru:'Каждое утро я бегаю в парке.'},
+      {en:'swim', ru:'плавать', ex_en:'I can <b>swim</b> very well.', ex_ru:'Я умею хорошо плавать.'},
+      {en:'read', ru:'читать', ex_en:'I <b>read</b> books every evening.', ex_ru:'Каждый вечер я читаю книги.'},
+      {en:'draw', ru:'рисовать', ex_en:'She can <b>draw</b> beautiful pictures.', ex_ru:'Она умеет рисовать красивые картинки.'},
+      {en:'sing', ru:'петь', ex_en:'She loves to <b>sing</b> songs.', ex_ru:'Она любит петь песни.'},
+      {en:'dance', ru:'танцевать', ex_en:'We <b>dance</b> at the school party.', ex_ru:'Мы танцуем на школьном вечере.'},
+      {en:'play', ru:'играть', ex_en:'Children <b>play</b> in the park.', ex_ru:'Дети играют в парке.'},
+      {en:'sleep', ru:'спать', ex_en:'I <b>sleep</b> eight hours every night.', ex_ru:'Я сплю восемь часов каждую ночь.'},
+      {en:'go', ru:'идти / ехать', ex_en:'I <b>go</b> to school by bus.', ex_ru:'Я еду в школу на автобусе.'},
+      {en:'come', ru:'приходить', ex_en:'Please <b>come</b> to my birthday party.', ex_ru:'Пожалуйста, приходи на мой день рождения.'},
+      {en:'see', ru:'видеть', ex_en:'I can <b>see</b> the mountains from here.', ex_ru:'Отсюда я вижу горы.'},
+      {en:'love', ru:'любить', ex_en:'I <b>love</b> my family very much.', ex_ru:'Я очень люблю свою семью.'},
+      {en:'help', ru:'помогать', ex_en:'I always <b>help</b> my mother.', ex_ru:'Я всегда помогаю маме.'},
+      {en:'make', ru:'делать / создавать', ex_en:'I <b>make</b> my bed every morning.', ex_ru:'Каждое утро я застилаю кровать.'},
+      {en:'give', ru:'давать', ex_en:'Please <b>give</b> me the book.', ex_ru:'Пожалуйста, дай мне книгу.'},
+      {en:'want', ru:'хотеть', ex_en:'I <b>want</b> a new bike for my birthday.', ex_ru:'Я хочу новый велосипед на день рождения.'},
+      {en:'know', ru:'знать', ex_en:'I <b>know</b> many English words.', ex_ru:'Я знаю много английских слов.'},
+      {en:'say', ru:'говорить / сказать', ex_en:'What did you <b>say</b>?', ex_ru:'Что ты сказал?'},
+      {en:'look', ru:'смотреть / выглядеть', ex_en:'<b>Look</b> at the beautiful rainbow!', ex_ru:'Посмотри на красивую радугу!'},
+      {en:'like', ru:'нравиться / любить', ex_en:'I <b>like</b> ice cream very much.', ex_ru:'Мне очень нравится мороженое.'},
+      {en:'write', ru:'писать', ex_en:'I <b>write</b> a letter to my friend.', ex_ru:'Я пишу письмо другу.'},
+      {en:'open', ru:'открывать', ex_en:'Please <b>open</b> the window.', ex_ru:'Пожалуйста, открой окно.'},
+      {en:'close', ru:'закрывать', ex_en:'Please <b>close</b> the door.', ex_ru:'Пожалуйста, закрой дверь.'},
+      {en:'jump', ru:'прыгать', ex_en:'Children <b>jump</b> on the trampoline.', ex_ru:'Дети прыгают на батуте.'},
+      {en:'fly', ru:'летать / лететь', ex_en:'Birds <b>fly</b> south in autumn.', ex_ru:'Осенью птицы летят на юг.'},
+      {en:'walk', ru:'идти / ходить', ex_en:'I <b>walk</b> to school every day.', ex_ru:'Каждый день я хожу в школу пешком.'},
+      {en:'talk', ru:'разговаривать', ex_en:'We <b>talk</b> about our holidays.', ex_ru:'Мы разговариваем о каникулах.'},
+      {en:'listen', ru:'слушать', ex_en:'Please <b>listen</b> to the teacher.', ex_ru:'Пожалуйста, слушай учителя.'},
+      {en:'think', ru:'думать', ex_en:'I <b>think</b> this answer is correct.', ex_ru:'Я думаю, этот ответ правильный.'},
+      {en:'sit', ru:'сидеть', ex_en:'Please <b>sit</b> down.', ex_ru:'Пожалуйста, садись.'},
+      {en:'stand', ru:'стоять', ex_en:'Please <b>stand</b> up.', ex_ru:'Пожалуйста, встань.'},
+      {en:'buy', ru:'покупать', ex_en:'We <b>buy</b> food at the shop.', ex_ru:'Мы покупаем еду в магазине.'},
+      {en:'learn', ru:'учить / учиться', ex_en:'I <b>learn</b> English at school.', ex_ru:'Я учу английский в школе.'},
+    ]
+  },
+];
+
+// Emoji per topic for flashcards
+const TOPIC_EMOJI = {
+  family:    ['👩','👨','👧','👦','👵','👴','👨‍👩‍👧‍👦','👦','👧','👩','👨','👶','🏠','🏢','🚪','🍳','🛏️','🚿','🌿','🪑','🪑','🛏️','🛋️','🚪','🪟','🪵','🧱','💡','🗄️','🧊'],
+  school:    ['🏫','👩‍🏫','🎒','📖','✏️','🖊️','📚','🎒','📏','🪑','📋','🏫','📝','📓','🧹','💬','❓','📄','⭐','⏰','📚','⚽','🎵'],
+  animals:   ['🐱','🐶','🐦','🐟','🐰','🐴','🐘','🐻','🦁','🐯','🐒','🐄','🐷','🦊','🐺','🦆','🐸','🐍','🐭','🐔','🦜','🦒','🐊','🐧','🐑','🐐','🐝','🦋'],
+  food:      ['🍎','🍌','🍊','🍋','🍓','🍞','🥛','💧','🧃','🍵','🍲','🥩','🐟','🧀','🥚','🎂','🥗','🍚','🧈','🍬','🥔','🍅','🥕','🧅','🥒','🍫','🍦','🍕'],
+  clothes:   ['👔','👗','🩱','👖','👖','👟','🥾','🎩','🧥','🧥','🧦','🧤','🧣','🧶','💤','🎽','👔','🩲'],
+  nature:    ['☀️','🌙','⭐','🌤️','☁️','🌳','🌸','🌿','🍃','🏞️','🏔️','🌊','🌊','⛰️','🌲','🌧️','❄️','💨','🧊','☀️','❄️','🌱','🍂','🌡️','🌡️'],
+  transport: ['🚗','🚌','🚂','✈️','🚲','🚕','🚢','🚋','🚇','🏪','🌳','🛣️','🛤️','🌉','🏥','🎬','🏛️','🛫','🚉','🏨','🏙️','🏘️','🗺️'],
+  body:      ['👤','😊','👁️','👂','👃','👄','🦷','✋','💪','🦵','🦶','🦵','💇','👆','🫀','❤️','🧬'],
+  colors:    ['🔴','🔵','🟢','🟡','🟠','🟣','🩷','⬜','⬛','🟫','🔘','☀️','🌑'],
+  verbs:     ['🍽️','🥤','🏃','🏊','📖','🎨','🎤','💃','🎮','😴','🚶','🤝','👁️','❤️','🤝','🛠️','🤲','💭','🧠','💬','👀','😊','✍️','🔓','🔒','🦘','🦅','🚶','🗣️','👂','🤔','🪑','🧍','🛒','📚'],
+};
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentTopic = null;
+let words = [];
+let idx = 0;
+let currentStep = 1; // 1 or 2
+let hasListened = false;
+
+// ══════════════════════════════════════════
+//  SCREENS
+// ══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════
+//  HOME
+// ══════════════════════════════════════════
+function renderHome() {
+  const list = document.getElementById('topics-list');
+  list.innerHTML = '';
+
+  // Random 30 words card
+  const allCard = document.createElement('div');
+  allCard.className = 'topic-card all-card';
+  allCard.onclick = () => startRandom();
+  allCard.innerHTML = `
+    <div class="emoji">🎲</div>
+    <div class="info">
+      <div class="topic-name">Случайные слова</div>
+      <div class="topic-meta">30 слов из всех тем · каждый раз новые</div>
+    </div>`;
+  list.appendChild(allCard);
+
+  TOPICS.forEach(topic => {
+    const card = document.createElement('div');
+    card.className = 'topic-card';
+    card.onclick = () => startLearn(topic);
+    card.innerHTML = `
+      <div class="emoji">${topic.emoji}</div>
+      <div class="info">
+        <div class="topic-name">${topic.name}</div>
+        <div class="topic-meta">${topic.words.length} слов</div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function goHome() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  showScreen('home');
+}
+
+// ══════════════════════════════════════════
+//  LEARN
+// ══════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startRandom() {
+  const all = TOPICS.reduce((acc, t) => acc.concat(t.words), []);
+  const randomWords = shuffle(all).slice(0, 30);
+  currentTopic = { id: 'random', name: 'Случайные слова', emoji: '🎲', words: randomWords };
+  words = randomWords;
+  document.getElementById('learn-topic-name').textContent = '🎲 Случайные слова';
+  idx = 0;
+  showScreen('learn');
+  renderCard();
+}
+
+function startLearn(topic) {
+  currentTopic = topic;
+  words = topic.words;
+  document.getElementById('learn-topic-name').textContent = topic.emoji + ' ' + topic.name;
+  idx = 0;
+  showScreen('learn');
+  renderCard();
+}
+
+function repeatTopic() {
+  idx = 0;
+  showScreen('learn');
+  renderCard();
+}
+
+function renderCard() {
+  const w = words[idx];
+  const total = words.length;
+  currentStep = 1;
+  hasListened = false;
+
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+
+  // Animate card
+  const card = document.getElementById('flashcard');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'cardIn 0.45s cubic-bezier(.34,1.56,.64,1) both';
+
+  document.getElementById('word-num').textContent = `${idx + 1} / ${total}`;
+  document.getElementById('learn-counter').textContent = `Слово ${idx + 1} из ${total}`;
+  document.getElementById('card-en').textContent = w.en;
+  document.getElementById('card-ru').textContent = w.ru;
+  document.getElementById('example-en').innerHTML = w.ex_en;
+  document.getElementById('example-ru').textContent = w.ex_ru;
+  document.getElementById('learn-prog').style.width = `${((idx + 1) / total) * 100}%`;
+
+  // Set emoji
+  const topicId = currentTopic ? currentTopic.id : null;
+  const emojiArr = topicId && TOPIC_EMOJI[topicId] ? TOPIC_EMOJI[topicId] : null;
+  const emojiEl = document.getElementById('card-emoji');
+  if (emojiArr && emojiArr[idx] !== undefined) {
+    emojiEl.textContent = emojiArr[idx];
+  } else if (!emojiArr) {
+    // All words mode - find topic by word
+    let found = '📖';
+    for (const t of TOPICS) {
+      const wi = t.words.findIndex(ww => ww.en === w.en);
+      if (wi !== -1 && TOPIC_EMOJI[t.id] && TOPIC_EMOJI[t.id][wi]) {
+        found = TOPIC_EMOJI[t.id][wi]; break;
+      }
+    }
+    emojiEl.textContent = found;
+  } else {
+    emojiEl.textContent = '📖';
+  }
+
+  // Show step 1, hide step 2
+  document.getElementById('step-1').classList.add('active');
+  document.getElementById('step-2').classList.remove('active');
+
+  // Dots
+  document.getElementById('dot-1').className = 'dot active';
+  document.getElementById('dot-2').className = 'dot';
+
+  // Reset listen button
+  const lb = document.getElementById('listen-btn');
+  lb.classList.remove('playing');
+  document.getElementById('listen-label').textContent = 'Нажми и послушай';
+  document.getElementById('listen-hint').style.display = 'block';
+
+  // Prev button
+  document.getElementById('prev-btn').style.opacity = idx === 0 ? '0.4' : '1';
+  document.getElementById('prev-btn').disabled = idx === 0;
+
+  // Lock next until listened
+  const nb = document.getElementById('next-btn');
+  nb.disabled = true;
+  nb.style.opacity = '0.4';
+  nb.textContent = 'Далее →';
+
+  // No auto-speak — user must press button
+}
+
+function speakWord() {
+  const word = words[idx].en;
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+
+  const lb = document.getElementById('listen-btn');
+  lb.classList.add('playing');
+  if (currentStep === 1) document.getElementById('listen-label').textContent = 'Слушай...';
+
+  const done = () => {
+    lb.classList.remove('playing');
+    if (currentStep === 1) {
+      document.getElementById('listen-label').textContent = '🔁 Послушать ещё раз';
+      document.getElementById('listen-hint').style.display = 'none';
+    }
+    // Unlock next after first listen
+    if (!hasListened) {
+      hasListened = true;
+      const nb = document.getElementById('next-btn');
+      nb.disabled = false;
+      nb.style.opacity = '1';
+      nb.style.transition = 'opacity 0.3s';
+    }
+  };
+
+  if (!window.speechSynthesis) { done(); return; }
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'en-US'; utter.rate = 0.82; utter.pitch = 1.0;
+  utter.onend = done; utter.onerror = done;
+  try { window.speechSynthesis.speak(utter); } catch(e) { done(); }
+}
+
+function nextStep() {
+  if (currentStep === 1) {
+    // Go to step 2 (example)
+    currentStep = 2;
+    document.getElementById('step-1').classList.remove('active');
+    document.getElementById('step-2').classList.add('active');
+    document.getElementById('dot-1').className = 'dot done';
+    document.getElementById('dot-2').className = 'dot active';
+    const nb = document.getElementById('next-btn');
+    nb.textContent = idx >= words.length - 1 ? 'Завершить ✓' : 'Следующее слово →';
+    // No auto-speak on step 2
+  } else {
+    // Go to next word or finish
+    if (idx >= words.length - 1) {
+      showFinish();
+    } else {
+      idx++;
+      renderCard();
+    }
+  }
+}
+
+function prevStep() {
+  if (currentStep === 2) {
+    // Go back to step 1
+    currentStep = 1;
+    document.getElementById('step-2').classList.remove('active');
+    document.getElementById('step-1').classList.add('active');
+    document.getElementById('dot-1').className = 'dot active';
+    document.getElementById('dot-2').className = 'dot';
+    const nb = document.getElementById('next-btn');
+    nb.textContent = 'Далее →';
+    // Already listened so keep unlocked
+    nb.disabled = false; nb.style.opacity = '1';
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+  } else {
+    if (idx > 0) { idx--; renderCard(); }
+  }
+}
+
+function showFinish() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  const name = currentTopic ? currentTopic.name : 'все слова';
+  document.getElementById('finish-title').textContent = currentTopic ? 'Тема изучена! 🎉' : 'Все слова пройдены! 🎉';
+  document.getElementById('finish-sub').textContent = `Ты прошла ${words.length} слов — молодец!`;
+  showScreen('finish');
+  burstStars();
+}
+
+// ══════════════════════════════════════════
+//  STARS
+// ══════════════════════════════════════════
+function burstStars() {
+  const c = document.getElementById('stars-burst');
+  const emojis = ['⭐','🌟','✨','💫','🎉'];
+  const cx = window.innerWidth / 2, cy = window.innerHeight * 0.3;
+  for (let i = 0; i < 22; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'sp';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      const a = Math.random() * 2 * Math.PI, d = 80 + Math.random() * 160;
+      el.style.left = cx + 'px'; el.style.top = cy + 'px';
+      el.style.setProperty('--tx', `${Math.cos(a)*d}px`);
+      el.style.setProperty('--ty', `${Math.sin(a)*d}px`);
+      el.style.setProperty('--rot', `${(Math.random()-.5)*360}deg`);
+      el.style.animationDuration = (0.8 + Math.random() * 0.5) + 's';
+      c.appendChild(el);
+      setTimeout(() => el.remove(), 1400);
+    }, i * 60);
+  }
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+renderHome();
+</script>
+</body>
+</html>
